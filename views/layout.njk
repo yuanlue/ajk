@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name='viewport' content='width=device-width'>
+    <title>抓取信息</title>
+    <link rel='stylesheet' href='/css/style.css'>
+    <link rel='stylesheet' href='/css/bootstrap.min.css'>
+        <link rel='stylesheet' href='/css/layer.css'>
+
+        <script src="/js/jquery-1.11.1.min.js"></script>
+
+    <script src="/js/layer.js"></script>
+
+</head>
+<body>
+  
+{% block content %}
+{% endblock %}
+</body>
+</html>
+<script>
+const short_month_names = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+
+function formatDate(date) {
+    console.log(typeof(date))
+    var date = new Date(parseInt(date))
+    var dateStr = date.getDate().toString();
+    if (dateStr.length === 1) {
+            dateStr = '0' + dateStr;
+    }
+    return date.getFullYear() + "-" + short_month_names[date.getMonth()] + "-" + dateStr;
+ };
+    let time = localStorage.time
+    let datas = localStorage.data
+    let Data = []
+    
+    if(localStorage.time){
+            time = formatDate(time)
+
+            $('.ajk .list_item h1').text(`安居客表格数据     ${time}`);
+
+    }
+    if(datas){
+          Data = JSON.parse(datas);
+         console.log(Data)
+          Data.result.forEach(function(item){
+                    $('.ajk .list_item .table').append(`<tr>
+                            <td>${item.name}</td>
+                            <td>${item.price}元/㎡</td>
+                            <td>${item.hx}</td>
+                            <td>${item.kp}</td>
+                            <td>${item.jf}</td>
+                            <td>${item.address}</td>
+                                                        <td>${item.cp}</td>
+
+                          </tr>`)
+                })
+    }
+        let sfw_time = localStorage.time
+
+     if(localStorage.sfw_time){
+            sfw_time = formatDate(sfw_time)
+
+            $('.sfw .list_item h1').text(`搜房网表格数据     ${sfw_time}`);
+
+    }
+     let sfw_data = localStorage.sfw_data
+       if(sfw_data){
+          sfw_Data = JSON.parse(sfw_data);
+         console.log(Data)
+          sfw_Data.result.forEach(function(item){
+                    $('.sfw .list_item .table').append(`<tr>
+                            <td>${item.name}</td>
+                            <td>${item.price}</td>
+                            <td>${item.hx}</td>
+                            <td>${item.tel}</td>
+                            <td>${item.status}</td>
+                                    <td>${item.kp}</td>
+                          </tr>`)
+                })
+    }
+    const ws = new WebSocket('ws://localhost:3001');
+
+    ws.onopen = () => {
+        console.log('WebSocket onopen');
+    }
+
+    ws.onmessage = e => {
+        console.log(e)
+       let data = JSON.parse(e.data)
+       if(data.type == 2){
+           //搜房网
+            $('.loading').prepend(`<p>${data.msg}</p>`)
+            if(data.code == 200 && data.result){
+                localStorage.sfw_data = JSON.stringify(data) 
+                localStorage.sfw_time = new Date().getTime()
+                                    console.log(sfw_data)
+
+                if(!sfw_data){
+                    data.result.forEach(function(item){
+                    $('.sfw .list_item .table').append(`<tr>
+                            <td>${item.name}</td>
+                            <td>${item.price}</td>
+                            <td>${item.hx}</td>
+                            <td>${item.tel}</td>
+                            <td>${item.status}</td>
+                             <td>${item.kp}</td>
+                          </tr>`)
+                })
+                }
+                else{
+                  
+                    data.result.forEach(function(item,index){
+                 
+                            $('.sfw .list_item table tr').each(function(){
+                                if($(this).find('td').eq(0).text() == item.name){
+                                    
+                                    if($(this).find('td').eq(1).text() != item.price && item.price!=''){
+                                        $(this).find('td').eq(1).css('color','red')
+                                        $(this).find('td').eq(1).attr('title',item.price)
+                                        // $(this).find('td').eq(1).text(item.price) 
+                                    }
+                                    if($(this).find('td').eq(2).text() != item.hx && item.hx!=''){
+                                        $(this).find('td').eq(2).css('color','red')
+                                        $(this).find('td').eq(2).attr('title',item.hx)
+                                    }
+                                    if($(this).find('td').eq(3).text() != item.tel && item.tel!=''){
+                                       $(this).find('td').eq(3).css('color','red')
+                                        $(this).find('td').eq(3).attr('title',item.tel)
+                                    }
+                                    if($(this).find('td').eq(4).text() != item.status && item.status!=''){
+                                        $(this).find('td').eq(4).css('color','red')
+                                        $(this).find('td').eq(4).attr('title',item.status)
+                                    }
+                                      if($(this).find('td').eq(5).text() != item.kp && item.kp!=''){
+                                        $(this).find('td').eq(5).css('color','red')
+                                        $(this).find('td').eq(5).attr('title',item.kp)
+                                    }
+                                   
+                                 
+                                }
+                          
+                            })
+                 
+                })
+                }
+               
+       }
+        return 
+       }
+       $('.loading').prepend(`<p>${data.msg}</p>`)
+            if(data.code == 200 && data.result){
+                localStorage.data = JSON.stringify(data) 
+                localStorage.time = new Date().getTime()
+                                    console.log(Data)
+
+                if(!Data.result){
+                    data.result.forEach(function(item){
+                    $('.ajk .list_item .table').append(`<tr>
+                            <td>${item.name}</td>
+                            <td>${item.price}元/㎡</td>
+                            <td>${item.hx}</td>
+                            <td>${item.kp}</td>
+                            <td>${item.jf}</td>
+                            <td>${item.address}</td>
+                            <td>${item.cp}</td>
+
+                          </tr>`)
+                })
+                }
+                else{
+                  
+                    data.result.forEach(function(item,index){
+                 
+                            $('.ajk .list_item table tr').each(function(){
+                                if($(this).find('td').eq(0).text() == item.name){
+                                    
+                                    if($(this).find('td').eq(1).text().split('元')[0] != item.price && item.price!=''){
+                                        $(this).find('td').eq(1).css('color','red')
+                                        $(this).find('td').eq(1).attr('title',item.price)
+                                        // $(this).find('td').eq(1).text(item.price) 
+                                    }
+                                    if($(this).find('td').eq(2).text() != item.hx && item.hx!=''){
+                                        $(this).find('td').eq(2).css('color','red')
+                                        $(this).find('td').eq(2).attr('title',item.hx)
+                                    }
+                                    if($(this).find('td').eq(3).text() != item.kp && item.kp!=''){
+                                       $(this).find('td').eq(3).css('color','red')
+                                        $(this).find('td').eq(3).attr('title',item.kp)
+                                    }
+                                    if($(this).find('td').eq(4).text() != item.jf && item.jf!=''){
+                                        $(this).find('td').eq(4).css('color','red')
+                                        $(this).find('td').eq(4).attr('title',item.jf)
+                                    }
+                                    if($(this).find('td').eq(5).text() != item.address && item.address!=''){
+                                        $(this).find('td').eq(5).attr('title',item.address)
+                                        // $(this).find('td').eq(5).text(item.i_address)  
+                                    }
+                                     if($(this).find('td').eq(6).text() != item.cp && item.cp!=''){
+                                        $(this).find('td').eq(6).attr('title',item.cp)
+                                        // $(this).find('td').eq(5).text(item.i_address)  
+                                    }
+                                }
+                          
+                            })
+                 
+                })
+                }
+       }
+    }
+
+    ws.onclose = e => {
+        console.log("WebSocket onclose");
+    };
+
+
+    $('.btn_ajk').click(function(){
+        $('.loading').show()
+        let data = "{\"action\":\"1\"}"
+        ws.send(data);
+        
+    })
+      $('.btn_sfw').click(function(){
+        $('.loading').show()
+        let data = "{\"action\":\"2\"}"
+        ws.send(data);
+        
+    })
+  
+  
+
+    </script>

@@ -1,0 +1,74 @@
+{% extends 'layout.njk' %}
+{% block content %}
+<h1 class="h1">信息比对</h1>
+<div class="opera">
+    <div class="btn_opera" style="margin-top:20px">
+        <button class="btn_ajk btn btn-default">抓取安居客数据</button>
+        <button class="btn btn_sfw btn-default">抓取搜房网数据</button>
+        <button class="btn btn_bkw btn-default">抓取贝壳网数据</button>
+    </div>
+  
+
+</div>
+<div class="contain">
+    <p class="loading"></p>
+    <div class="list ajk">
+     
+        <div class="list_item">
+            <h1 lass="h2">安居客表格数据</h1>
+            <table class="table table-striped"">
+                        <tr>
+                            <th>项目名称</th>
+                            <th>均价</th>
+                            <th>户型</th>
+                            <th>开盘时间</th>
+                            <th>交房时间</th>
+                            <th>地址</th>
+                            <th>测评</th>
+                          </tr>
+                       
+            </table>
+          
+        </div>
+    </div>
+    <div class="list sfw">
+     
+        <div class="list_item">
+            <h1 lass="h2">搜房网表格数据</h1>
+            <table class="table table-striped">
+                        <tr>
+                            <th>项目名称</th>
+                            <th>均价</th>
+                            <th>户型</th>
+                            <th>电话</th>
+                            <th>状态</th>
+                             <th>开盘</th>
+
+                          </tr>
+                       
+            </table>
+          
+        </div>
+    </div>
+    <div class="list bkw">
+     
+        <div class="list_item">
+            <h1 lass="h2">贝壳网表格数据</h1>
+            <table class="table table-striped">
+                        <tr>
+                            <th>项目名称</th>
+                            <th>均价</th>
+                            <th>户型</th>
+                            <th>电话</th>
+                            <th>状态</th>
+                             <th>开盘</th>
+
+                          </tr>
+                       
+            </table>
+          
+        </div>
+    </div>
+</div>
+{% endblock %}
+
